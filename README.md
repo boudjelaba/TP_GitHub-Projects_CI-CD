@@ -17,3 +17,11 @@ Ce dépôt sert de support au TP consacré à Git, GitHub, GitHub Actions, GitHu
 2. Suivre les consignes du TP dans l'ordre.
 3. Compléter les fichiers du projet au fur et à mesure des étapes.
 
+### Diagnostic de régression
+
+- **Test en échec :** `test_add`
+- **Valeur attendue :** `5`
+- **Valeur obtenue :** `-1`
+- **Cause :** la fonction `add` utilisait la soustraction au lieu de l'addition.
+- **Correction :** rétablissement de `return a + b`.
+- **Vérification :** les trois tests passent après correction.
