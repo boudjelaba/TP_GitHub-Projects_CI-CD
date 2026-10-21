@@ -39,3 +39,45 @@ jobs:
 
       - name: Exécuter les tests
         run: python -m pytest -v
+
+  deploy_staging:
+    name: Préparer la livraison
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: staging
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v7
+
+      - name: Préparer les fichiers à livrer
+        run: |
+          mkdir -p dist
+          cp -r app README.md dist/
+          cd dist
+          zip -r ../calculator.zip app README.md
+
+      - name: Publier l'artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-${{ github.sha }}
+          path: calculator.zip
+          if-no-files-found: error
+          retention-days: 7
+ 
+  deploy_production:
+    name: Vérifier la livraison
+    needs: deploy_staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: production
+
+    steps:
+      - name: Vérifier la disponibilité de l'artefact
+        run: |
+          echo "Artefact publié lors de l'étape précédente."
+          echo "Aucun déploiement réel n'est effectué."
+          echo "Commit : $GITHUB_SHA"
